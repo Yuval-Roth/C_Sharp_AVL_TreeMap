@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Yuval\\source\\repos\\Yuval-Roth\\C_Sharp_AVLTree\\program\\program.csproj": {}
+    "C:\\Users\\Yuval\\git\\C_Sharp_AVLTree\\program\\program.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Yuval\\source\\repos\\Yuval-Roth\\C_Sharp_AVLTree\\program\\program.csproj": {
+    "C:\\Users\\Yuval\\git\\C_Sharp_AVLTree\\program\\program.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Yuval\\source\\repos\\Yuval-Roth\\C_Sharp_AVLTree\\program\\program.csproj",
+        "projectUniqueName": "C:\\Users\\Yuval\\git\\C_Sharp_AVLTree\\program\\program.csproj",
         "projectName": "AVLTree",
-        "projectPath": "C:\\Users\\Yuval\\source\\repos\\Yuval-Roth\\C_Sharp_AVLTree\\program\\program.csproj",
+        "projectPath": "C:\\Users\\Yuval\\git\\C_Sharp_AVLTree\\program\\program.csproj",
         "packagesPath": "C:\\Users\\Yuval\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Yuval\\source\\repos\\Yuval-Roth\\C_Sharp_AVLTree\\program\\obj\\",
+        "outputPath": "C:\\Users\\Yuval\\git\\C_Sharp_AVLTree\\program\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
