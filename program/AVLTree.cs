@@ -29,7 +29,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
     /// <br/>
     /// ===================
     /// </summary>
-    public sealed class AVLTree<Key,Data> : IEnumerable<Data> where Key : IComparable
+    public sealed class AVLTree<Key,Data> : IEnumerable<Data?> where Key : IComparable
     {
         private AVLTreeNode root;
 
@@ -47,9 +47,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         ///</summary>
         ///<exception cref="DuplicateKeysNotSupported"></exception>
         ///<returns>A pointer to the inserted Data</returns>
-        public Data Add(Key key, Data data)
+        public Data? Add(Key key, Data data)
         {
-            Data output = null;
+            Data? output = default(Data);
 
             // if tree is empty, add to the root
             if (root == null)
@@ -98,9 +98,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                         else current = current.Right;
                     }
                 }
-                return output;
-
-
                 //try
                 //{
                 //    return root.Add(key, data, this).Data;
@@ -110,6 +107,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 //    throw;
                 //}
             }
+            return output;
 
         }
 
@@ -122,6 +120,10 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         public Data Remove(Key key)
         {
             if(root == null) throw new KeyNotFoundException("Key not found in the tree");
+
+
+
+
             try
             {
                 return root.Search(key).Remove().Data;
