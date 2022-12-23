@@ -29,14 +29,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
     /// <br/>
     /// ===================
     /// </summary>
-    public sealed class AVLTree<Key,Data> : IEnumerable<Data> where Key : IComparable
+    public sealed class AVLTree_Iterative<Key,Data> : IEnumerable<Data> where Key : IComparable
     {
         private AVLTreeNode? root;
 
         /// <summary>
         /// Creates an empty <c>AVLTree</c>
         /// </summary>
-        public AVLTree()
+        public AVLTree_Iterative()
         {
             root = null;
         }
@@ -217,7 +217,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         private sealed class AVLTreeNode
         {
-            private readonly AVLTree<Key,Data> tree;
+            private readonly AVLTree_Iterative<Key,Data> tree;
             private readonly Key key;
             private readonly Data data;
             private AVLTreeNode? left;
@@ -225,7 +225,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             private AVLTreeNode? parent;
             private int height;
 
-            public AVLTreeNode(Key key,Data data, AVLTree<Key,Data> tree)
+            public AVLTreeNode(Key key,Data data, AVLTree_Iterative<Key,Data> tree)
             {
                 this.tree = tree;
                 left = null;
@@ -561,7 +561,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             AVLTreeNode initialPosition;
             AVLTreeNode? current;
             AVLTreeNode? next;
-            public AVLTree_InOrder_Data_Enumerator(AVLTree<Key,Data> tree)
+            public AVLTree_InOrder_Data_Enumerator(AVLTree_Iterative<Key,Data> tree)
             {
                 if (tree.IsEmpty() == false)
                 {
