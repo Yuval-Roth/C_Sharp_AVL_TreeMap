@@ -186,8 +186,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             public AVLTreeNode Right
             {
-                get { return left; }
-                set { left = value; }
+                get { return right; }
+                set { right = value; }
             }
             public AVLTreeNode Parent
             {
