@@ -29,9 +29,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
     /// <br/>
     /// ===================
     /// </summary>
-    public sealed class AVLTree<Key,Data> : IEnumerable<Data?> where Key : IComparable
+    public sealed class AVLTree<Key,Data> : IEnumerable<Data> where Key : IComparable
     {
-        private AVLTreeNode root;
+        private AVLTreeNode? root;
 
         /// <summary>
         /// Creates an empty <c>AVLTree</c>
@@ -74,6 +74,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                             output = current.Left.Data;
                             current.FixHeights();
                             if (current.Parent != null) current.Parent.Balance(true);
+                            break;
                         }
 
                         //pass it down
@@ -84,31 +85,20 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                         //empty spot
                         if (current.Right == null)
                         {
-                            current.Right = new AVLTreeNode(key, data, this)
-                            {
-
-                            };
+                            current.Right = new AVLTreeNode(key, data, this);
                             current.Right.Parent = current;
                             output = current.Right.Data;
                             current.FixHeights();
                             if (current.Parent != null) current.Parent.Balance(true);
+                            break;
                         }
 
                         //pass it down
                         else current = current.Right;
                     }
                 }
-                //try
-                //{
-                //    return root.Add(key, data, this).Data;
-                //}
-                //catch(DuplicateKeysNotSupported)
-                //{
-                //    throw;
-                //}
             }
             return output;
-
         }
 
         ///<summary>
@@ -119,14 +109,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         ///<exception cref="KeyNotFoundException"></exception>
         public Data Remove(Key key)
         {
-            if(root == null) throw new KeyNotFoundException("Key not found in the tree");
-
-
-
-
             try
             {
-                return root.Search(key).Remove().Data;
+                return Search(key).Remove().Data;
             }
             catch (KeyNotFoundException)
             {
@@ -137,10 +122,16 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         ///<summary>Check if the <c>AVLTree</c> contains an element with this key<br/><br/>
         /// </summary>
         ///<returns><c>true</c> if an element with this key exists in the tree and <c>false</c> otherwise</returns>
-            public bool Contains(Key key)
+        public bool Contains(Key key)
         {
-            if (root != null) return root.Contains(key);
-            else return false;
+            try
+            {
+                return Search(key) != null;
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
+            }
         }
 
         ///<summary>Check if the <c>AVLTree</c> is empty</summary>
@@ -158,18 +149,46 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         /// </summary>
         /// <returns><c>The element's <c>Data</c></c></returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        public Data GetData(Key key)
+        public Data Get(Key key)
         {
             try
             {
-                if(root != null) return root.Search(key).Data;
-                else throw new KeyNotFoundException("Key not found in the tree");
+                return Search(key).Data;
             }
             catch (KeyNotFoundException)
             {
                 throw;
             }
         }
+
+        private AVLTreeNode Search(Key key)
+        {
+            if (root == null) throw new KeyNotFoundException("Key not found");
+
+            AVLTreeNode current = root;
+
+            while (current != null)
+            {
+                //check if the current node is the target
+                if (current.Key.CompareTo(key) == 0)
+                {
+                    return current;
+                }
+                //binary search for it
+                else if (current.Left != null && current.Key.CompareTo(key) > 0)
+                {
+                    current = current.Left;
+                }
+                else if (current.Right != null && current.Key.CompareTo(key) < 0)
+                {
+                    current = current.Right;
+                }
+            }
+
+            //can't find it
+            throw new KeyNotFoundException("Key not found");
+        }
+
         public override string ToString()
         {
             if (root != null) return root.ToString();
@@ -201,9 +220,9 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             private readonly AVLTree<Key,Data> tree;
             private readonly Key key;
             private readonly Data data;
-            private AVLTreeNode left;
-            private AVLTreeNode right;
-            private AVLTreeNode parent;
+            private AVLTreeNode? left;
+            private AVLTreeNode? right;
+            private AVLTreeNode? parent;
             private int height;
 
             public AVLTreeNode(Key key,Data data, AVLTree<Key,Data> tree)
@@ -224,17 +243,17 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             public Key Key => key;
             public Data Data => data;
 
-            public AVLTreeNode Left
+            public AVLTreeNode? Left
             {
                 get { return left; }
                 set { left = value; }
             }
-            public AVLTreeNode Right
+            public AVLTreeNode? Right
             {
                 get { return left; }
                 set { left = value; }
             }
-            public AVLTreeNode Parent
+            public AVLTreeNode? Parent
             {
                 get { return parent; }
                 set { parent = value; }
@@ -248,98 +267,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             //======================================
             //            Functionality
             //======================================
-
-
-
-            ///<summary>
-            /// Adds an element into the <c>AVLTree</c>.<br/><br/>
-            ///<b>throws</b> <c>DuplicateKeysNotSupported</c> if an element with the same key already exists in the tree
-            ///</summary>
-            ///<exception cref="DuplicateKeysNotSupported"></exception>
-            public AVLTreeNode Add(Key key, Data data, AVLTree<Key,Data> tree)
-            {
-                //check if element already exists in the tree
-                if (this.key.CompareTo(key) == 0) throw new DuplicateKeysNotSupported("Element already exists in the tree");
-
-                //find a place to add it
-                if (this.key.CompareTo(key) > 0)
-                {
-                    //empty spot
-                    if (left == null)
-                    {
-                        left = new AVLTreeNode(key, data, tree)
-                        {
-                            Parent = this,
-                        };
-                        AVLTreeNode output = left;
-                        FixHeights();
-                        if (parent != null) parent.Balance(true);
-                        return output;
-                    }
-
-                    //pass it down
-                    else return left.Add(key, data,tree);
-                }
-                else
-                {
-                    //empty spot
-                    if (right == null)
-                    {
-                        right = new AVLTreeNode(key, data, tree)
-                        {
-                            parent = this
-                        };
-                        AVLTreeNode output = right;
-                        FixHeights();
-                        if (parent != null) parent.Balance(true);
-                        return output;
-                    }
-
-                    //pass it down
-                    else return right.Add(key, data, tree);
-                }
-            }
-
-            ///<summary>Check if the <c>AVLTree</c> contains a node with this key</summary>
-            ///<returns><c>true</c> if the node with this key exists in the tree and <c>false</c> otherwise</returns>
-            public bool Contains(Key key)
-            {
-                try
-                {
-                    return Search(key) != null;
-                }
-                catch (KeyNotFoundException)
-                {
-                    return false;
-                }
-          
-            }
-
-            /// <summary>
-            /// search for a node with the specified key<br/><br/>
-            /// <b>Throws</b> <c>KeyNotFoundException</c> if a node with this key does not exist in the <c>AVLTree</c>
-            /// </summary>
-            /// <returns>AVLTreeNode</returns>
-            /// <exception cref="KeyNotFoundException"></exception>
-            public AVLTreeNode Search(Key key)
-            {
-                //check if the current node is the target
-                if (this.key.CompareTo(key) == 0)
-                {
-                    return this;
-                }
-                //binary search for it
-                else if (left != null && this.key.CompareTo(key) > 0)
-                {
-                    return left.Search(key);
-                }
-                else if (right != null && this.key.CompareTo(key) < 0)
-                {
-                    return right.Search(key);
-                }
-                //can't find it
-                else throw new KeyNotFoundException("Key not found in the tree");
-            }
 
             ///<summary>
             ///Removes a node from the <c>AVLTree</c><br/><br/>
@@ -482,7 +409,6 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     {
                         current = current.parent;
                     }
-                    //if (current == null) throw new KeyNotFoundException("Successor doesn't exist");
                     return current;
                 }
             }
@@ -633,8 +559,8 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         public class AVLTree_InOrder_Data_Enumerator : IEnumerator<Data>
         {
             AVLTreeNode initialPosition;
-            AVLTreeNode current;
-            AVLTreeNode next;
+            AVLTreeNode? current;
+            AVLTreeNode? next;
             public AVLTree_InOrder_Data_Enumerator(AVLTree<Key,Data> tree)
             {
                 if (tree.IsEmpty() == false)
