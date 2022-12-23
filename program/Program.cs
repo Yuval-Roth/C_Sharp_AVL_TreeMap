@@ -1,4 +1,5 @@
-﻿using IntroSE.Kanban.Backend.BusinessLayer;
+﻿using AVLTree.Iterative;
+using AVLTree.Recursive;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,14 +19,14 @@ namespace AVLTree
 
             //recursive(count);
 
-            iterative(count);
+            //iterative(count);
         }
 
         private static void iterative(int count)
         {
             Random rand = new();
             DateTime start = DateTime.Now;
-            AVLTree_Iterative<int, int> tree2 = new();
+            Iterative.AVLTree<int, int> tree2 = new();
             for (int i = 0; i < count; i++)
             {
                 tree2.Add(i, rand.Next(-count, count));
@@ -41,7 +42,7 @@ namespace AVLTree
         {
             Random rand = new();
             DateTime start = DateTime.Now;
-            AVLTree<int, int> tree = new();
+            Recursive.AVLTree<int, int> tree = new();
             for (int i = 0; i < count; i++)
             {
                 tree.Add(i, rand.Next(-count, count));

@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace IntroSE.Kanban.Backend.BusinessLayer
+
+namespace AVLTree.Recursive
 {
 
     //===========================================================================
@@ -29,7 +30,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
     /// <br/>
     /// ===================
     /// </summary>
-    public sealed class AVLTree<Key,Data> : IEnumerable<Data> where Key : IComparable
+    public sealed class AVLTree<Key, Data> : IEnumerable<Data> where Key : IComparable
     {
         private AVLTreeNode root;
 
@@ -52,7 +53,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             // if tree is empty, add to the root
             if (root == null)
             {
-                root = new AVLTreeNode(key,data, this);
+                root = new AVLTreeNode(key, data, this);
                 return root.Data;
             }
             //otherwise pass it down
@@ -62,7 +63,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 {
                     return root.Add(key, data, this).Data;
                 }
-                catch(DuplicateKeysNotSupported)
+                catch (DuplicateKeysNotSupported)
                 {
                     throw;
                 }
@@ -78,7 +79,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         ///<exception cref="KeyNotFoundException"></exception>
         public Data Remove(Key key)
         {
-            if(root == null) throw new KeyNotFoundException("Key not found in the tree");
+            if (root == null) throw new KeyNotFoundException("Key not found in the tree");
             try
             {
                 return root.Search(key).Remove().Data;
@@ -92,7 +93,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         ///<summary>Check if the <c>AVLTree</c> contains an element with this key<br/><br/>
         /// </summary>
         ///<returns><c>true</c> if an element with this key exists in the tree and <c>false</c> otherwise</returns>
-            public bool Contains(Key key)
+        public bool Contains(Key key)
         {
             if (root != null) return root.Contains(key);
             else return false;
@@ -117,7 +118,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
         {
             try
             {
-                if(root != null) return root.Search(key).Data;
+                if (root != null) return root.Search(key).Data;
                 else throw new KeyNotFoundException("Key not found in the tree");
             }
             catch (KeyNotFoundException)
@@ -153,7 +154,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
         private sealed class AVLTreeNode
         {
-            private readonly AVLTree<Key,Data> tree;
+            private readonly AVLTree<Key, Data> tree;
             private readonly Key key;
             private readonly Data data;
             private AVLTreeNode left;
@@ -161,7 +162,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             private AVLTreeNode parent;
             private int height;
 
-            public AVLTreeNode(Key key,Data data, AVLTree<Key,Data> tree)
+            public AVLTreeNode(Key key, Data data, AVLTree<Key, Data> tree)
             {
                 this.tree = tree;
                 left = null;
@@ -211,7 +212,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             ///<b>throws</b> <c>DuplicateKeysNotSupported</c> if an element with the same key already exists in the tree
             ///</summary>
             ///<exception cref="DuplicateKeysNotSupported"></exception>
-            public AVLTreeNode Add(Key key, Data data, AVLTree<Key,Data> tree)
+            public AVLTreeNode Add(Key key, Data data, AVLTree<Key, Data> tree)
             {
                 //check if element already exists in the tree
                 if (this.key.CompareTo(key) == 0) throw new DuplicateKeysNotSupported("Element already exists in the tree");
@@ -233,7 +234,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     }
 
                     //pass it down
-                    else return left.Add(key, data,tree);
+                    else return left.Add(key, data, tree);
                 }
                 else
                 {
@@ -267,7 +268,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 {
                     return false;
                 }
-          
+
             }
 
             /// <summary>
@@ -356,7 +357,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 // case 4: node has 2 children
                 else
                 {
-                    
+
                     successor = Successor().Remove();
 
                     //parent
@@ -386,12 +387,12 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                     {
                         current.Balance(false);
                         current = current.parent;
-                    } 
+                    }
                 }
                 return this;
             }
 
-            private void FixHeights() 
+            private void FixHeights()
             {
                 AVLTreeNode current = this;
                 while (current != null)
@@ -451,16 +452,16 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
 
                 // go left until there is more left to go
                 AVLTreeNode current = this;
-                while (current.left != null) 
-                { 
+                while (current.left != null)
+                {
                     current = current.left;
                 }
                 return current;
             }
-            private bool ThisNodeIsARightSon() 
+            private bool ThisNodeIsARightSon()
             {
                 if (parent != null) return parent.right == this;
-                
+
                 return false;
             }
             private bool ThisNodeIsALeftSon()
@@ -511,7 +512,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 {
                     if (parent != null & Find_First_Unbalanced_Node) return parent.Balance(true);
                     else return false;
-                } 
+                }
             }
             private void LeftLeftRotation()
             {
@@ -554,21 +555,21 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 else tree.root = right;
                 parent = right;
                 right = rightLeftChild;
-                if(rightLeftChild != null) rightLeftChild.parent = this;
+                if (rightLeftChild != null) rightLeftChild.parent = this;
                 if (parent.right != null) parent.right.FixHeights();
             }
             public override string ToString()
             {
-                return ToString("  ","");
+                return ToString("  ", "");
             }
-            private string ToString(string spaces,string output)
+            private string ToString(string spaces, string output)
             {
-                if(right != null) output = right.ToString(spaces + "        ",output);
+                if (right != null) output = right.ToString(spaces + "        ", output);
 
-                if (parent != null) output += spaces + Key.ToString()+"("+parent.key.ToString()+")"+"\n";
-                else output += spaces + Key.ToString()+"(root)"+"\n";
+                if (parent != null) output += spaces + Key.ToString() + "(" + parent.key.ToString() + ")" + "\n";
+                else output += spaces + Key.ToString() + "(root)" + "\n";
 
-                if (left != null) output = left.ToString(spaces + "        ",output);
+                if (left != null) output = left.ToString(spaces + "        ", output);
                 return output;
             }
             public void PrintTree()
@@ -590,7 +591,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             AVLTreeNode initialPosition;
             AVLTreeNode current;
             AVLTreeNode next;
-            public AVLTree_InOrder_Data_Enumerator(AVLTree<Key,Data> tree)
+            public AVLTree_InOrder_Data_Enumerator(AVLTree<Key, Data> tree)
             {
                 if (tree.IsEmpty() == false)
                 {
@@ -613,7 +614,7 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
             }
             private void PrepareNext()
             {
-                if(current == null) next = initialPosition;
+                if (current == null) next = initialPosition;
                 else next = current.Successor();
             }
             public void Reset()
@@ -621,14 +622,14 @@ namespace IntroSE.Kanban.Backend.BusinessLayer
                 current = null;
             }
 
-            public void Dispose(){ }
+            public void Dispose() { }
         }
 
     }
-    //public class DuplicateKeysNotSupported : SystemException
-    //{
-    //    public DuplicateKeysNotSupported() : base() { }
-    //    public DuplicateKeysNotSupported(string message) : base(message) { }
-    //    public DuplicateKeysNotSupported(string message, Exception innerException) : base(message, innerException) { }
-    //}
+    public class DuplicateKeysNotSupported : SystemException
+    {
+        public DuplicateKeysNotSupported() : base() { }
+        public DuplicateKeysNotSupported(string message) : base(message) { }
+        public DuplicateKeysNotSupported(string message, Exception innerException) : base(message, innerException) { }
+    }
 }
