@@ -20,7 +20,7 @@ namespace AVLTree.Iterative
     /// <list type="bullet">Add()</list>
     /// <list type="bullet">Remove()</list>
     /// <list type="bullet">Contains()</list>
-    /// <list type="bullet">GetData()</list>
+    /// <list type="bullet">Get()</list>
     /// <list type="bullet">IsEmpty()</list>
     /// <br/><br/>
     /// ===================
