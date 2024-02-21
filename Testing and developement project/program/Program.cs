@@ -26,7 +26,7 @@ namespace AVLTree
 
             tree.PrintTree();
 
-            foreach (int curr in tree)
+            foreach (MapEntry<int,int> curr in tree)
             {
                 Console.WriteLine(curr);
             }
