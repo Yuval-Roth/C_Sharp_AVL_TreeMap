@@ -1,6 +1,4 @@
-﻿using AVLTree.Iterative;
-using AVLTree.Recursive;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,44 +12,31 @@ namespace AVLTree
         public static void Main()
         {
 
-            int count = 1000;
+            TreeMap<int, int> tree = new();
+            tree.Put(1, 1);
+            tree.Put(2, 2);
+            tree.Put(3, 3);
+            tree.Put(4, 4);
+            tree.Put(5, 5);
+            tree.Put(6, 6);
+            tree.Put(2, 20);
+            tree.Put(3, 30);
+            tree.Put(5, 50);
 
 
-            //recursive(count);
+            tree.PrintTree();
 
-            //iterative(count);
-        }
-
-        private static void iterative(int count)
-        {
-            Random rand = new();
-            DateTime start = DateTime.Now;
-            Iterative.AVLTree<int, int> tree2 = new();
-            for (int i = 0; i < count; i++)
+            foreach (int curr in tree)
             {
-                tree2.Add(i, rand.Next(-count, count));
+                Console.WriteLine(curr);
             }
-            for (int i = 0; i < count; i++)
-            {
-                tree2.Remove(i);
-            }
-            Console.WriteLine("iterative finished after " + (DateTime.Now - start).TotalMilliseconds + " ms");
-        }
-
-        static void recursive(int count)
-        {
-            Random rand = new();
-            DateTime start = DateTime.Now;
-            Recursive.AVLTree<int, int> tree = new();
-            for (int i = 0; i < count; i++)
-            {
-                tree.Add(i, rand.Next(-count, count));
-            }
-            for (int i = 0; i < count; i++)
+            for (int i = 1; i <= 6; i++)
             {
                 tree.Remove(i);
+                tree.PrintTree();
+                Console.WriteLine("==================");
             }
-            Console.WriteLine("recursive finished after " + (DateTime.Now - start).TotalMilliseconds + " ms");
         }
+        
     }
 }

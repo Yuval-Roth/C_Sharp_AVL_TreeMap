@@ -1,27 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 
-namespace AVLTree.Iterative
-{
 
     //===========================================================================
-    //                                AVLTree
+    //                                TreeMap
     //===========================================================================
 
 
 
     /// <summary>
     /// ======================================================<br/>
-    /// This class implements a generic AVL Tree that that is ordered with a <typeparamref name="Key"/> that is <see cref="IComparable"/><br/>
+    /// This class implements a TreeMap<K,V> that that is ordered with a <typeparamref name="K"/> that is <see cref="IComparable"/><br/>
     /// This implementation is <see cref="IEnumerable{T}"/> and supports in-order enumeration over the tree.<br/><br/>
-    /// <b>This implementation does not support duplicate keys</b>
-    /// <code>Supported operations:</code>
-    /// <list type="bullet">Add()</list>
-    /// <list type="bullet">Remove()</list>
-    /// <list type="bullet">Contains()</list>
-    /// <list type="bullet">GetData()</list>
-    /// <list type="bullet">IsEmpty()</list>
     /// <br/><br/>
     /// ===================
     /// <br/>
@@ -29,49 +18,54 @@ namespace AVLTree.Iterative
     /// <br/>
     /// ===================
     /// </summary>
-    public sealed class AVLTree<Key, Data> : IEnumerable<Data> where Key : IComparable
+    public sealed class TreeMap<K, V> : IEnumerable<V> where K : IComparable
     {
-        private AVLTreeNode? root;
+        private TreeMapNode? root;
 
         /// <summary>
-        /// Creates an empty <c>AVLTree</c>
+        /// Creates an empty <c>TreeMap</c>
         /// </summary>
-        public AVLTree()
+        public TreeMap()
         {
             root = null;
         }
 
         ///<summary>
-        /// Adds an element into the <c>AVLTree</c>.<br/><br/>
-        ///<b>throws</b> <c>DuplicateKeysNotSupported</c> if an element with the same key already exists in the tree
+        /// Adds an element into the <c>TreeMap</c>.<br/><br/>
         ///</summary>
-        ///<exception cref="DuplicateKeysNotSupported"></exception>
-        ///<returns>A pointer to the inserted Data</returns>
-        public Data? Add(Key key, Data data)
+        ///<returns>A pointer to the inserted Value</returns>
+        public V? Put(K key, V value)
         {
-            Data? output = default;
+            V? output = default;
 
             // if tree is empty, add to the root
             if (root == null)
             {
-                root = new AVLTreeNode(key, data, this);
-                output = root.Data;
+                root = new TreeMapNode(key, value, this);
+                output = root.Value;
             }
             //otherwise pass it down
             else
             {
-                AVLTreeNode current = root;
+                TreeMapNode current = root;
                 while (current != null)
-                {
+                { 
+                    // overwrite existing data if key exists
+                    if (current.Key.CompareTo(key) == 0)
+                    {
+                        current.Value = value;
+                        break;
+                    }
+
                     //find a place to add it
-                    if (current.Key.CompareTo(key) > 0)
+                    else if (current.Key.CompareTo(key) > 0)
                     {
                         //empty spot
                         if (current.Left == null)
                         {
-                            current.Left = new AVLTreeNode(key, data, this);
+                            current.Left = new TreeMapNode(key, value, this);
                             current.Left.Parent = current;
-                            output = current.Left.Data;
+                            output = current.Left.Value;
                             current.FixHeights();
                             if (current.Parent != null) current.Parent.Balance(true);
                             break;
@@ -85,9 +79,9 @@ namespace AVLTree.Iterative
                         //empty spot
                         if (current.Right == null)
                         {
-                            current.Right = new AVLTreeNode(key, data, this);
+                            current.Right = new TreeMapNode(key, value, this);
                             current.Right.Parent = current;
-                            output = current.Right.Data;
+                            output = current.Right.Value;
                             current.FixHeights();
                             if (current.Parent != null) current.Parent.Balance(true);
                             break;
@@ -102,16 +96,16 @@ namespace AVLTree.Iterative
         }
 
         ///<summary>
-        ///Removes the element with this key from the <c>AVLTree</c><br/><br/>
-        ///<b>Throws</b> <c>KeyNotFoundException</c> if the element is not in the <c>AVLTree</c>
+        ///Removes the element with this key from the <c>TreeMap</c><br/><br/>
+        ///<b>Throws</b> <c>KeyNotFoundException</c> if the element is not in the <c>TreeMap</c>
         ///</summary>
         ///<returns>The removed node's element data</returns>
         ///<exception cref="KeyNotFoundException"></exception>
-        public Data Remove(Key key)
+        public V Remove(K key)
         {
             try
             {
-                return Search(key).Remove().Data;
+                return Search(key).Remove().Value;
             }
             catch (KeyNotFoundException)
             {
@@ -119,10 +113,10 @@ namespace AVLTree.Iterative
             }
         }
 
-        ///<summary>Check if the <c>AVLTree</c> contains an element with this key<br/><br/>
+        ///<summary>Check if the <c>TreeMap</c> contains an element with this key<br/><br/>
         /// </summary>
         ///<returns><c>true</c> if an element with this key exists in the tree and <c>false</c> otherwise</returns>
-        public bool Contains(Key key)
+        public bool Contains(K key)
         {
             try
             {
@@ -134,7 +128,7 @@ namespace AVLTree.Iterative
             }
         }
 
-        ///<summary>Check if the <c>AVLTree</c> is empty</summary>
+        ///<summary>Check if the <c>TreeMap</c> is empty</summary>
         ///<returns><c>true</c> if the tree is empty and <c>false</c> otherwise</returns>
         public bool IsEmpty()
         {
@@ -145,15 +139,15 @@ namespace AVLTree.Iterative
         /// search for an element with the specified key and get its <c>Data</c><br/><br/>
         /// <br/><br/>
         /// <b>Throws</b> <c>KeyNotFoundException</c> if there is no element<br/>
-        /// with this key in the <c>AVLTree</c>
+        /// with this key in the <c>TreeMap</c>
         /// </summary>
         /// <returns><c>The element's <c>Data</c></c></returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        public Data Get(Key key)
+        public V Get(K key)
         {
             try
             {
-                return Search(key).Data;
+                return Search(key).Value;
             }
             catch (KeyNotFoundException)
             {
@@ -161,11 +155,11 @@ namespace AVLTree.Iterative
             }
         }
 
-        private AVLTreeNode Search(Key key)
+        private TreeMapNode Search(K key)
         {
             if (root == null) throw new KeyNotFoundException("Key not found");
 
-            AVLTreeNode current = root;
+            TreeMapNode current = root;
 
             while (current != null)
             {
@@ -202,37 +196,37 @@ namespace AVLTree.Iterative
 
         public IEnumerator GetEnumerator()
         {
-            return new AVLTree_InOrder_Data_Enumerator(this);
+            return new TreeMap_InOrder_Data_Enumerator(this);
         }
 
-        IEnumerator<Data> IEnumerable<Data>.GetEnumerator()
+        IEnumerator<V> IEnumerable<V>.GetEnumerator()
         {
-            return new AVLTree_InOrder_Data_Enumerator(this);
+            return new TreeMap_InOrder_Data_Enumerator(this);
         }
 
 
         //===========================================================================
-        //                                AVLTreeNode
+        //                                TreeMapNode
         //===========================================================================
 
-        private sealed class AVLTreeNode
+        private sealed class TreeMapNode
         {
-            private readonly AVLTree<Key, Data> tree;
-            private readonly Key key;
-            private readonly Data data;
-            private AVLTreeNode? left;
-            private AVLTreeNode? right;
-            private AVLTreeNode? parent;
+            private readonly TreeMap<K, V> tree;
+            private readonly K key;
+            private V value;
+            private TreeMapNode? left;
+            private TreeMapNode? right;
+            private TreeMapNode? parent;
             private int height;
 
-            public AVLTreeNode(Key key, Data data, AVLTree<Key, Data> tree)
+            public TreeMapNode(K key, V value, TreeMap<K, V> tree)
             {
                 this.tree = tree;
                 left = null;
                 right = null;
                 parent = null;
                 this.key = key;
-                this.data = data;
+                this.value = value;
                 height = 0;
             }
             //======================================
@@ -240,20 +234,24 @@ namespace AVLTree.Iterative
             //======================================
 
 
-            public Key Key => key;
-            public Data Data => data;
+            public K Key => key;
+            public V Value
+            {
+                get { return value; }
+                set { this.value = value; }
+            }
 
-            public AVLTreeNode? Left
+            public TreeMapNode? Left
             {
                 get { return left; }
                 set { left = value; }
             }
-            public AVLTreeNode? Right
+            public TreeMapNode? Right
             {
                 get { return right; }
                 set { right = value; }
             }
-            public AVLTreeNode? Parent
+            public TreeMapNode? Parent
             {
                 get { return parent; }
                 set { parent = value; }
@@ -269,15 +267,15 @@ namespace AVLTree.Iterative
             //======================================
 
             ///<summary>
-            ///Removes a node from the <c>AVLTree</c><br/><br/>
+            ///Removes a node from the <c>TreeMap</c><br/><br/>
             ///
             ///<b>Warning:</b> Only works on a node that is in a tree.<br/>
             ///can throw unexpected exceptions if misused
             ///</summary>
-            ///<returns>The removed AVLTreeNode</returns>
-            public AVLTreeNode Remove()
+            ///<returns>The removed TreeMapNode</returns>
+            public TreeMapNode Remove()
             {
-                AVLTreeNode successor = null;
+                TreeMapNode successor = null;
                 // case 1: node has no children
                 if (left == null & right == null)
                 {
@@ -350,7 +348,7 @@ namespace AVLTree.Iterative
                 }
                 if (tree.root != null)
                 {
-                    AVLTreeNode current = this;
+                    TreeMapNode current = this;
                     if (successor != null)
                         current = successor;
                     else current = current.parent;
@@ -365,7 +363,7 @@ namespace AVLTree.Iterative
 
             public void FixHeights()
             {
-                AVLTreeNode current = this;
+                TreeMapNode current = this;
                 while (current != null)
                 {
                     if (current.left == null & current.right == null) current.height = 0;
@@ -384,8 +382,8 @@ namespace AVLTree.Iterative
             /// <summary>
             /// Find the successor of a node <br/><br/>
             /// </summary>
-            /// <returns>AVLTreeNode if there is a successor or <b>null</b> otherwise</returns>
-            public AVLTreeNode Successor()
+            /// <returns>TreeMapNode if there is a successor or <b>null</b> otherwise</returns>
+            public TreeMapNode Successor()
             {
                 // if there is a right child
                 // the minimum of the right subtree is the successor
@@ -404,7 +402,7 @@ namespace AVLTree.Iterative
                 // if there is no bigger ancestor, return null
                 else
                 {
-                    AVLTreeNode current = parent;
+                    TreeMapNode current = parent;
                     while (current != null && key.CompareTo(current.key) > 0)
                     {
                         current = current.parent;
@@ -414,14 +412,14 @@ namespace AVLTree.Iterative
             }
 
             /// <summary>
-            /// Find the minimum in the <c>AVLTree</c>
+            /// Find the minimum in the <c>TreeMap</c>
             /// </summary>
-            /// <returns>AVLTreeNode</returns>
-            public AVLTreeNode Minimum()
+            /// <returns>TreeMapNode</returns>
+            public TreeMapNode Minimum()
             {
 
                 // go left until there is more left to go
-                AVLTreeNode current = this;
+                TreeMapNode current = this;
                 while (current.left != null)
                 {
                     current = current.left;
@@ -504,7 +502,7 @@ namespace AVLTree.Iterative
             }
             private void RightRotate()
             {
-                AVLTreeNode leftRightChild = left.right;
+                TreeMapNode leftRightChild = left.right;
                 left.right = this;
                 left.parent = parent;
                 if (ThisNodeIsALeftSon()) parent.left = left;
@@ -517,7 +515,7 @@ namespace AVLTree.Iterative
             }
             private void LeftRotate()
             {
-                AVLTreeNode rightLeftChild = right.left;
+                TreeMapNode rightLeftChild = right.left;
                 right.left = this;
                 right.parent = parent;
                 if (ThisNodeIsALeftSon()) parent.left = right;
@@ -556,12 +554,12 @@ namespace AVLTree.Iterative
                 if (left != null) left.PrintTree(spaces + "        ");
             }
         }
-        public class AVLTree_InOrder_Data_Enumerator : IEnumerator<Data>
+        public class TreeMap_InOrder_Data_Enumerator : IEnumerator<V>
         {
-            AVLTreeNode initialPosition;
-            AVLTreeNode? current;
-            AVLTreeNode? next;
-            public AVLTree_InOrder_Data_Enumerator(AVLTree<Key, Data> tree)
+            TreeMapNode initialPosition;
+            TreeMapNode? current;
+            TreeMapNode? next;
+            public TreeMap_InOrder_Data_Enumerator(TreeMap<K, V> tree)
             {
                 if (tree.IsEmpty() == false)
                 {
@@ -570,9 +568,9 @@ namespace AVLTree.Iterative
                 }
             }
 
-            Data IEnumerator<Data>.Current => current.Data;
+            V IEnumerator<V>.Current => current.Value;
 
-            public object Current => current.Data;
+            public object Current => current.Value;
 
             public bool MoveNext()
             {
@@ -596,10 +594,3 @@ namespace AVLTree.Iterative
         }
 
     }
-    public class DuplicateKeysNotSupported : SystemException
-    {
-        public DuplicateKeysNotSupported() : base() { }
-        public DuplicateKeysNotSupported(string message) : base(message) { }
-        public DuplicateKeysNotSupported(string message, Exception innerException) : base(message, innerException) { }
-    }
-}
